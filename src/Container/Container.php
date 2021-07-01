@@ -941,6 +941,65 @@ class Container
 	}
 
 	/**
+	 * Filter container elements by values
+	 *
+	 * @param array|\Traversable $container
+	 *        	Container to filter
+	 * @param callable $callable
+	 *        	Filter callable invoked for each element of $container.
+	 *        	The prototype must be function ($value) : boolean
+	 * @return array Filtered container
+	 */
+	public static function filterValues($container, $callable)
+	{
+		if (!self::isTraversable($container))
+			throw new InvalidContainerException($container, __METHOD__);
+		if (!\is_callable($callable))
+			throw new \InvalidArgumentException(
+				'Invalid filter procedure');
+
+		if (\is_array($container))
+			return \array_filter($container, $callable);
+
+		$result = [];
+		foreach ($container as $key => $value)
+		{
+			if (\call_user_func($callable, $value))
+				$result[$key] = $value;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Filter container elements by keys
+	 *
+	 * @param array|\Traversable $container
+	 *        	Container to filter
+	 * @param callable $callable
+	 *        	Filter callable invoked for each element of $container.
+	 *        	The prototype must be function ($key) : boolean
+	 * @return array Filtered container
+	 */
+	public static function filterKeys($container, $callable)
+	{
+		if (!self::isTraversable($container))
+			throw new InvalidContainerException($container, __METHOD__);
+		if (!\is_callable($callable))
+			throw new \InvalidArgumentException(
+				'Invalid filter procedure');
+
+		$result = [];
+		foreach ($container as $key => $value)
+		{
+			if (\call_user_func($callable, $key))
+				$result[$key] = $value;
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Returns an array containing the results of applying the callback to each of input container
 	 * elements.
 	 *
