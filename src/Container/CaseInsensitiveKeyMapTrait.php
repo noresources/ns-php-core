@@ -35,7 +35,7 @@ trait CaseInsensitiveKeyMapTrait
 	 */
 	public function count()
 	{
-		return $this->map->count();
+		return $this->caseSensitiveMap->count();
 	}
 
 	/**
@@ -44,7 +44,7 @@ trait CaseInsensitiveKeyMapTrait
 	 */
 	public function getIterator()
 	{
-		return $this->map->getIterator();
+		return $this->caseSensitiveMap->getIterator();
 	}
 
 	/**
@@ -53,7 +53,7 @@ trait CaseInsensitiveKeyMapTrait
 	 */
 	public function getArrayCopy()
 	{
-		return $this->map->getArrayCopy();
+		return $this->caseSensitiveMap->getArrayCopy();
 	}
 
 	/**
@@ -97,16 +97,38 @@ trait CaseInsensitiveKeyMapTrait
 
 	public function exchangeArray($array)
 	{
-		$this->initializeCaseInsensitiveKeyMapTrait($array);
+		$this->initializeCaseInsensitiveKeyMapTrait($array, true);
 	}
 
+	/**
+	 *
+	 * @param \ArrayObject|array $array
+	 *        	Input array. If $array is a \ArrayObject nad $copy is not true. The internal map
+	 *        	will use $array as a reference.
+	 * @param NULL|boolean $copy
+	 *        	If TRUE, copy input array anyway. If NULL, set to FALSE if $array is ArrayObject,
+	 *        	FALSE otherwise.
+	 *        	If FALSE and if input array is a ArrayObject,
+	 *        	use $array as referecne
+	 */
 	protected function initializeCaseInsensitiveKeyMapTrait(
-		$array = array())
+		$array = array(), $copy = null)
 	{
-		$this->map = new \ArrayObject($array);
+		if ($copy === null)
+			$copy = ($array instanceof \ArrayObject) ? false : true;
+
+		if ($array instanceof \ArrayObject && !$copy)
+			$this->caseSensitiveMap = $array;
+		else
+		{
+			if (!isset($this->caseSensitiveMap))
+				$this->caseSensitiveMap = new \ArrayObject();
+			$this->caseSensitiveMap->exchangeArray(
+				Container::createArray($array));
+		}
+
 		$this->keys = [];
-		;
-		foreach ($this->map as $key => $value)
+		foreach ($this->caseSensitiveMap as $key => $value)
 			if (\is_string($key))
 				$this->keys[\strtolower($key)] = $key;
 	}
@@ -115,7 +137,7 @@ trait CaseInsensitiveKeyMapTrait
 	{
 		if (\is_string($name))
 			return Container::keyExists($this->keys, \strtolower($name));
-		return $this->map->offsetExists($name);
+		return $this->caseSensitiveMap->offsetExists($name);
 	}
 
 	protected function caselessOffsetGet($name)
@@ -123,7 +145,7 @@ trait CaseInsensitiveKeyMapTrait
 		if (\is_string($name))
 			$name = Container::keyValue($this->keys, \strtolower($name),
 				$name);
-		return $this->map->offsetGet($name);
+		return $this->caseSensitiveMap->offsetGet($name);
 	}
 
 	protected function caselessOffsetSet($name, $value)
@@ -133,12 +155,12 @@ trait CaseInsensitiveKeyMapTrait
 			$lower = \strtolower($name);
 			if (($previous = Container::keyValue($this->keys, $lower)) &&
 				($previous != $name))
-				$this->map->offsetUnset($previous);
+				$this->caseSensitiveMap->offsetUnset($previous);
 
 			$this->keys[$lower] = $name;
 		}
 
-		$this->map->offsetSet($name, $value);
+		$this->caseSensitiveMap->offsetSet($name, $value);
 	}
 
 	protected function caselessOffsetUnset($name)
@@ -150,14 +172,14 @@ trait CaseInsensitiveKeyMapTrait
 			Container::removeKey($this->keys, $lower);
 		}
 
-		$this->map->offsetUnset($name);
+		$this->caseSensitiveMap->offsetUnset($name);
 	}
 
 	/**
 	 *
 	 * @var \ArrayObject
 	 */
-	private $map;
+	private $caseSensitiveMap;
 
 	/**
 	 *
