@@ -52,7 +52,7 @@ class PhpSourceTokenVisitor implements \Iterator, \Countable
 			$this->tokens = $codeOrArray;
 		elseif (Container::isTraversable($codeOrArray))
 			$this->tokens = new \ArrayObject(
-				Container::createArray($codeOrArray));
+				TypeConversion::toArray($codeOrArray));
 		else
 			throw new \InvalidArgumentException(
 				'Array of token or PHP source code text expected');

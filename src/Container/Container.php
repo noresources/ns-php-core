@@ -391,51 +391,6 @@ class Container
 	}
 
 	/**
-	 * Transform any type to a plain PHP array
-	 *
-	 * @deprecated TypeConversion::toArray () should be preferred in most cases
-	 *
-	 * @param mixed $anything
-	 *        	The container
-	 * @param number $singleElementKey
-	 *        	Key used to create a single element array when is not something that could be
-	 *        	converted to an array
-	 * @return array or null if $anything cannont be converted to array and $singleElementKey is
-	 *         null
-	 */
-	public static function createArray($anything,
-		$singleElementKey = null)
-	{
-		if (\is_array($anything))
-			return $anything;
-		elseif ($anything instanceof \ArrayObject ||
-			$anything instanceof ArrayRepresentation)
-			return $anything->getArrayCopy();
-
-		if ($anything instanceof \JsonSerializable)
-		{
-			$j = $anything->jsonSerialize();
-			if (\is_array($j))
-				return $j;
-		}
-
-		if (self::isTraversable($anything))
-		{
-			$a = [];
-			foreach ($anything as $k => $v)
-				$a[$k] = $v;
-			return $a;
-		}
-
-		if ($singleElementKey !== null)
-			return [
-				$singleElementKey => $anything
-			];
-
-		throw new InvalidContainerException($anything);
-	}
-
-	/**
 	 * Indicates if the given container could be considered as
 	 * an indexed array
 	 *
