@@ -50,8 +50,8 @@ class ChainElementIterator implements \Iterator
 	public function key()
 	{
 		if ($this->current instanceof IntegerRepresentation)
-			return $this->current->getInteger();
-		elseif (TypeDescription::hasStringRepresentation($element))
+			return $this->current->getIntegerValue();
+		elseif (TypeDescription::hasStringRepresentation($this->current))
 			return \strval($this->current);
 		return null;
 	}

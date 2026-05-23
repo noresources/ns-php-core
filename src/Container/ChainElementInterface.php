@@ -19,7 +19,7 @@ interface ChainElementInterface
 	 *
 	 * @param ChainElementInterface $after
 	 */
-	function insertBefor(ChainElementInterface $after);
+	function insertBefore(ChainElementInterface $after);
 
 	/**
 	 * Insert the instance after the given chain link.

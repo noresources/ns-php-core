@@ -64,7 +64,7 @@ final class ChainTest extends \PHPUnit\Framework\TestCase
 			'insert :: backward');
 
 		$head = new ChainValue('head');
-		$head->insertBefor($a);
+		$head->insertBefore($a);
 		$this->assertEquals('head, a, b2, b, c',
 			self::stringifyForward($head), 'prepend :: forward');
 	}

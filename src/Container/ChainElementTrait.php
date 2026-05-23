@@ -19,7 +19,7 @@ trait ChainElementTrait
 	 * @param ChainElementInterface $after
 	 *        	Element to insert before it
 	 */
-	public function insertBefor(ChainElementInterface $after)
+	public function insertBefore(ChainElementInterface $after)
 	{
 		$before = $after->getPreviousElement();
 		$this->attachBetween($before, $after);
