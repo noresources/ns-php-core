@@ -1521,7 +1521,7 @@ class Container
 		$result = [];
 
 		if (self::count($args))
-			foreach ($container as $value)
+			foreach ($container as $kay => $value)
 				$result[$key] = \call_user_func_array($callable,
 					\array_merge([
 						$value

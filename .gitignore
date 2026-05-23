@@ -9,3 +9,6 @@
 
 # Tests derived data
 /tests/derived
+
+# AI
+CLAUDE.md
