@@ -184,17 +184,18 @@ class Stack implements \Countable, \IteratorAggregate,
 	 */
 	public function __set($member, $value)
 	{
-		$e = $this->top();
+		if ($this->count() == 0)
+			throw new \UnderflowException('Stack is empty');
 
-		if (Container::keyExists($e, $member))
-		{
-			Container::setValue($e, $member, $value);
-			return;
-		}
+		$index = $this->count() - 1;
 
-		throw new \InvalidArgumentException(
-			$member . ' is not a member of ' .
-			TypeDescription::getName($e));
+		if (!Container::keyExists($this->stackElements[$index], $member))
+			throw new \InvalidArgumentException(
+				$member . ' is not a member of ' .
+				TypeDescription::getName($this->stackElements[$index]));
+
+		Container::setValue($this->stackElements[$index], $member,
+			$value);
 	}
 
 	/**

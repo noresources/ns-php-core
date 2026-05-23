@@ -44,6 +44,32 @@ final class StackTest extends \PHPUnit\Framework\TestCase
 		$this->assertEquals(2019, $stack->y);
 	}
 
+	public function testSetOnEmptyStackThrows()
+	{
+		$this->expectException(\UnderflowException::class);
+		$stack = new Stack();
+		$stack->y = 2019;
+	}
+
+	public function testSetUnknownMemberThrows()
+	{
+		$this->expectException(\InvalidArgumentException::class);
+		$stack = new Stack();
+		$stack->push(new \DateInterval('P1Y'));
+		$stack->nonExistentProperty = 'value';
+	}
+
+	public function testSetOnArrayTop()
+	{
+		$stack = new Stack();
+		$stack->push([
+			'key' => 'original'
+		]);
+		$stack->key = 'updated';
+		$this->assertEquals('updated', $stack->key,
+			'Write must persist in the stack element, not a local copy');
+	}
+
 	public function testTopCall()
 	{
 		$stack = new Stack();
