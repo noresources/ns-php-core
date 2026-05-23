@@ -12,7 +12,7 @@ use NoreSources\Type\TypeDescription;
 /**
  * Exception raised when the object given to Container member class is not a valid container
  */
-class EmptyContainerException extends \EmptyArgumentException implements
+class EmptyContainerException extends \Exception implements
 	ContainerExceptionInterface
 {
 
