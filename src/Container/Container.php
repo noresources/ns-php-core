@@ -564,10 +564,13 @@ class Container
 		if (\is_array($container))
 		{
 			reset($container);
+			return;
 		}
-		elseif ($container instanceof \Iterator)
+
+		if ($container instanceof \Iterator)
 		{
 			$container->rewind();
+			return;
 		}
 
 		throw new InvalidContainerException($container, __METHOD__);
