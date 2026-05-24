@@ -39,7 +39,8 @@ class DateTimeZone extends \DateTimeZone
 		\DateTimeZone $timezone, $timezoneGroup = \DateTimeZone::ALL,
 		$countryCode = null)
 	{
-		$identifiers = self::listIdentifiers();
+		$identifiers = self::listIdentifiers($timezoneGroup,
+			$countryCode);
 		$now = new \DateTime('now');
 		$now->setTimezone(DateTime::getUTCTimezone());
 		$offset = $timezone->getOffset($now);
@@ -81,11 +82,13 @@ class DateTimeZone extends \DateTimeZone
 		{
 			if ($description == 0)
 				return clone DateTime::getUTCTimezone();
+
+			$sign = ($description < 0) ? '-' : '+';
+			$v = \abs($description);
+
 			$description = [
-				self::DESCRIPTION_OFFSET => sprintf('%s%02d:%02d',
-					(($description > 0) ? '+' : ''),
-					\floor($description / 3600),
-					(\floor($description) % 60)),
+				self::DESCRIPTION_OFFSET => sprintf('%s%02d:%02d', $sign,
+					\floor($v / 3600), (int) ($v % 3600 / 60)),
 				self::DESCRIPTION_OFFSET_FORMAT => 'P'
 			];
 		}
@@ -139,7 +142,8 @@ class DateTimeZone extends \DateTimeZone
 			if ($value == 0)
 				return clone DateTime::getUTCTimezone();
 			$value = sprintf("%s%02d:%02d", (($value > 0) ? '+' : ''),
-				\floor($value / 3600), ($value % 60));
+				\floor(\abs($value) / 3600),
+				(int) (\abs($value) % 3600 / 60));
 		}
 
 		if (\preg_match(
