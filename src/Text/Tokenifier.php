@@ -143,7 +143,7 @@ class Tokenifier
 				}
 				continue;
 			}
-			elseif ($this->findStartingQuute($quotingPair, $c))
+			elseif ($this->findStartingQuote($quotingPair, $c))
 			{
 				if ($token !== null)
 				{
@@ -166,7 +166,7 @@ class Tokenifier
 
 		if ($escaping)
 			throw new \InvalidArgumentException(
-				'Unterminated escpae sequence');
+				'Unterminated escape sequence');
 
 		if ($quotingPair >= 0)
 			throw new \InvalidArgumentException(
@@ -197,7 +197,7 @@ class Tokenifier
 			\array_merge($list, $this->escapables, $this->whitespaces));
 	}
 
-	protected function findStartingQuute(&$offset, $character)
+	protected function findStartingQuote(&$offset, $character)
 	{
 		$o = 0;
 		foreach ($this->quotingPairs as $p)
