@@ -349,7 +349,7 @@ class DateTime extends \DateTime implements IntegerRepresentation,
 	public static function toJulianDay(\DateTimeInterface $dateTime,
 		$utc = true)
 	{
-		if ($dateTime->getOffset() != 0)
+		if ($utc && $dateTime->getOffset() != 0)
 		{
 			$dateTime = clone $dateTime;
 			$dateTime->setTimezone(self::getUTCTimezone());
@@ -419,11 +419,6 @@ class DateTime extends \DateTime implements IntegerRepresentation,
 	public function getArrayCopy()
 	{
 		$tz = $this->getTimezone()->getName();
-		$type = 2;
-		if (\preg_match('/(\+|-)[0-9]{2}(,?[0-9]{2})/', $tz))
-			$type = 1;
-		elseif (\preg_match(',[a-zA-Z]+/[a-zA-Z]+,', $tz))
-			$type = 3;
 
 		return [
 			'date' => $this->format('Y-m-d H:i:s.u'),
@@ -509,7 +504,7 @@ class DateTime extends \DateTime implements IntegerRepresentation,
 		{
 			$timezone = Container::keyValue($array, 'timezone', null);
 			if ($timezone)
-				$timezone = \DateTimeZone::createFromDescription(
+				$timezone = DateTimeZone::createFromDescription(
 					$timezone);
 
 			$instance = \DateTime::createFromFormat(
