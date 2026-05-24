@@ -112,6 +112,48 @@ final class SemanticVersionTest extends \PHPUnit\Framework\TestCase
 		}
 	}
 
+	public function testPrereleasePrecedence()
+	{
+		// semver rule 11: release > pre-release when major.minor.patch are equal
+		$release = new SemanticVersion('1.0.0');
+		$prerelease = new SemanticVersion('1.0.0-alpha');
+
+		$this->assertGreaterThan(0, $release->compare($prerelease),
+			'Release has higher precedence than pre-release');
+		$this->assertLessThan(0, $prerelease->compare($release),
+			'Pre-release has lower precedence than release');
+
+		// equal versions (no prerelease) must compare as equal
+		$this->assertEquals(0,
+			(new SemanticVersion('2.5.0'))->compare(
+				new SemanticVersion('2.5.0')),
+			'Equal versions without pre-release compare as equal');
+
+		// equal versions (same prerelease) must compare as equal
+		$this->assertEquals(0,
+			(new SemanticVersion('1.0.0-alpha.1'))->compare(
+				new SemanticVersion('1.0.0-alpha.1')),
+			'Equal versions with identical pre-release compare as equal');
+
+		// numeric identifiers are compared numerically: 2 > 1
+		$this->assertGreaterThan(0,
+			(new SemanticVersion('1.0.0-alpha.2'))->compare(
+				new SemanticVersion('1.0.0-alpha.1')),
+			'Numeric pre-release identifiers are compared numerically');
+
+		// numeric identifiers have lower precedence than alphanumeric: 1 < beta
+		$this->assertLessThan(0,
+			(new SemanticVersion('1.0.0-alpha.1'))->compare(
+				new SemanticVersion('1.0.0-alpha.beta')),
+			'Numeric identifier has lower precedence than alphanumeric');
+
+		// a larger set of identifiers has higher precedence when all preceding are equal
+		$this->assertGreaterThan(0,
+			(new SemanticVersion('1.0.0-alpha.1.1'))->compare(
+				new SemanticVersion('1.0.0-alpha.1')),
+			'Longer pre-release has higher precedence when prefix is equal');
+	}
+
 	public function testSlice()
 	{
 		$tests = [

@@ -324,9 +324,9 @@ class SemanticVersion implements StringRepresentation,
 			case self::PRE_RELEASE:
 				$this->prerelease->set($value);
 			break;
+			default:
+				throw new \InvalidArgumentException($member);
 		}
-
-		throw new \InvalidArgumentException($member);
 	}
 
 	/**
@@ -540,7 +540,7 @@ final class SemanticPostfixedData extends \ArrayObject implements
 		$cb = $data->count();
 
 		if ($ca == 0)
-			return ($cb == 0) ? 1 : -1;
+			return ($cb == 0) ? 0 : 1;
 		elseif ($cb == 0)
 			return -1;
 
@@ -558,14 +558,14 @@ final class SemanticPostfixedData extends \ArrayObject implements
 					// identifiers consisting of only digits are compared numerically
 					$va = intval($va);
 					$vb = intval($vb);
-					if ($va < $vb)
-						return -1;
-					elseif ($va > $vb)
-						return 1;
+					if ($va != $vb)
+						return ($va - $vb);
 				}
-
-				// Numeric identifiers always have lower precedence than non-numeric identifiers
-				return -1;
+				else
+				{
+					// Numeric identifiers always have lower precedence than non-numeric identifiers
+					return -1;
+				}
 			}
 			elseif (preg_match($numericRegex, $vb))
 			{
