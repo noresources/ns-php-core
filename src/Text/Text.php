@@ -90,8 +90,8 @@ class Text
 		{
 			$hex = dechex($value);
 			if ($upperCase)
-				$hex = \strtoupper($hex);
-			if (\strlen($value) % 2 == 1)
+				$hex = \strtoupper(\strval($hex));
+			if (\strlen(\strval($hex)) % 2 == 1)
 				$hex = '0' . $hex;
 			return $hex;
 		}
